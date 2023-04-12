@@ -215,11 +215,20 @@ func release(source string, destination string) error {
 	if err != nil {
 		return err
 	}
-	writer, err = newWriter(metadata, []string{"cn"})
+	writer, err = newWriter(metadata, []string{"cn", "private"})
 	if err != nil {
 		return err
 	}
-	err = write(writer, countryMap, "geoip-cn.db", []string{"cn"})
+	err = write(writer, countryMap, "geoip-cn.db", []string{"cn", "private"})
+	if err != nil {
+		return err
+	}
+	countries := []string{"cn", "telegram", "netflix", "private", "aws"}
+	writer, err = newWriter(metadata, countries)
+	if err != nil {
+		return err
+	}
+	err = write(writer, countryMap, "geoip-lite.db", countries)
 	if err != nil {
 		return err
 	}
@@ -242,7 +251,7 @@ func main() {
 	if len(os.Args) >= 3 {
 		err = local(os.Args[1], os.Args[2], os.Args[2:])
 	} else {
-		err = release("soffchen/geoip", "soffchen/sing-geoip")
+		err = release("qaz617/geoip", "qaz617/sing-geoip")
 	}
 	if err != nil {
 		logrus.Fatal(err)
