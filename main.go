@@ -243,6 +243,15 @@ func release(source string, destination string) error {
 }
 
 func setActionOutput(name string, content string) {
+	outputFile := os.Getenv("GITHUB_OUTPUT")
+	if outputFile != "" {
+		f, err := os.OpenFile(outputFile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+		if err == nil {
+			defer f.Close()
+			f.WriteString(name + "=" + content + "\n")
+			return
+		}
+	}
 	os.Stdout.WriteString("::set-output name=" + name + "::" + content + "\n")
 }
 
