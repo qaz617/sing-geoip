@@ -15,7 +15,12 @@ jobs:
       - name: Get latest go version
         id: version
         run: |
-          echo ::set-output name=go_version::$(curl -s https://raw.githubusercontent.com/actions/go-versions/main/versions-manifest.json | grep -oE '"version": "[0-9]{1}.[0-9]{1,}(.[0-9]{1,})?"' | head -1 | cut -d':' -f2 | sed 's/ //g; s/"//g')
+          # Get latest go version from actions/go-versions manifest and set as step output
+          go_version=$(curl -s https://raw.githubusercontent.com/actions/go-versions/main/versions-manifest.json \
+            | grep -oE '"version": "[0-9]+\.[0-9]+(\.[0-9]+)?"' \
+            | head -n1 \
+            | sed -E 's/.*"version": "([^"]+)".*/\1/')
+          echo "go_version=$go_version" >> "$GITHUB_OUTPUT"
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
